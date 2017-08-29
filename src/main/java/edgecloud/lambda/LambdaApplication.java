@@ -12,7 +12,17 @@ public class LambdaApplication {
     }
 
     public static void main(String args[]) {
+        init();
         SpringApplication.run(LambdaApplication.class, args);
+    }
+
+    // TODO
+    // 1. Query all available edge node
+    private static void init() {
+        updateNodes();
+    }
+
+    private static void updateNodes() {
     }
 
 }
