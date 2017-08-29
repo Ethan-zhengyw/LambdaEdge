@@ -1,5 +1,6 @@
 package edgecloud.lambda.controller;
 
+import edgecloud.lambda.entity.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,7 @@ public class HomeController {
     // Operate Page
     @GetMapping("/create")
     public String creatFunction(Model map) {
+        map.addAttribute("function", new Function());
         return "create_function";
     }
 
