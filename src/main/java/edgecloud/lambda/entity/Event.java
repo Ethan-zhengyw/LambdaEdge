@@ -11,23 +11,36 @@ public class Event {
     @GeneratedValue
     private Integer id;
 
-//    private Integer eventId;
-
     private String eventName;
+
+    private String result;
 
     public Integer getId() {
         return id;
     }
 
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getEventName() {
         return eventName;
     }
 
-    public String toString() {
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+	
+	
+	public String toString() {
         return String.format("{\"id\": %d, \"eventName\": %s}",
                 id, eventName);
     }
