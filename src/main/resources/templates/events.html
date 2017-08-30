@@ -4,5 +4,23 @@
 </head>
 <body>
 <h1>事件列表</h1>
+
+<div class="container" column="col-sm-4" align="center">
+
+    <table class="table table-striped">
+
+        <thead><th>Id</th><th>EventName</th></thead>
+
+        <tbody>
+        <tr th:each="event : ${events}">
+            <td th:text="${event.id}">0</td>
+            <td th:text="${event.eventName}">test</td>
+        </tr>
+        </tbody>
+
+    </table>
+
+</div>
+
 </body>
 </html>
