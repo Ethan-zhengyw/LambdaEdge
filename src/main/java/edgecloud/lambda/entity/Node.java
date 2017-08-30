@@ -7,22 +7,40 @@ import javax.persistence.Id;
 
 @Entity
 public class Node {
+
     @Id
     @GeneratedValue
     private Integer id;
 
-    private String nodeName;
+    private String desc;
+
+    private Integer status;
+    // 1 - online
+    // 0 - offline
+
+
 
     public Integer getId() {
         return id;
     }
 
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getNodeName() {
-        return nodeName;
+    public String getDesc() {
+        return desc;
     }
 
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 }
