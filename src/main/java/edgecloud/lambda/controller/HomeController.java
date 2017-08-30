@@ -1,6 +1,7 @@
 package edgecloud.lambda.controller;
 
 import edgecloud.lambda.entity.Event;
+import edgecloud.lambda.entity.EventFunctionMapping;
 import edgecloud.lambda.entity.Function;
 import edgecloud.lambda.entity.FunctionNodeMap;
 import edgecloud.lambda.entity.Node;
@@ -59,8 +60,15 @@ public class HomeController {
         return "mapping";
     }
 
-    @GetMapping("/send")
+    @GetMapping("/send_event")
     public String sendEvent(Model map) {
-        return "send_event";
+        return "list_event_results";
     }
+
+    @GetMapping("/create_event_func_map")
+    public String createEventFunctionMapping(Model map) {
+        map.addAttribute("mapping", new EventFunctionMapping());
+        return "create_mapping";
+    }
+
 }

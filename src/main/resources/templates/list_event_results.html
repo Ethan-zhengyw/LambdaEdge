@@ -12,7 +12,7 @@ Result
         <thead><th>Id</th><th>EventName</th><th>EventResult</th></thead>
 
         <tbody>
-        <tr th:each="event : ${eventResults}">
+        <tr th:each="event : ${list_event_results}">
             <td th:text="${event.id}">0</td>
             <td th:text="${event.eventName}">test</td>
             <td th:text="${event.eventResult}">test</td>
