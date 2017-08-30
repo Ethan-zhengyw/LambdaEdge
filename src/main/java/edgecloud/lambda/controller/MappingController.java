@@ -2,8 +2,9 @@ package edgecloud.lambda.controller;
 
 import edgecloud.lambda.entity.Event;
 import edgecloud.lambda.entity.Function;
-import edgecloud.lambda.entity.MyMapping;
-import edgecloud.lambda.repository.MappingRepository;
+import edgecloud.lambda.entity.EventFunctionMapping;
+import edgecloud.lambda.repository.EventRepository;
+import edgecloud.lambda.repository.EventFunctionMappingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
+//import java.util.UUID;
 
 @Controller
 public class MappingController {
@@ -23,46 +24,38 @@ public class MappingController {
     private static final Logger log = LoggerFactory.getLogger(MappingController.class);
 
     @Autowired
-    private MappingRepository myMappingRepository;
+    private EventFunctionMappingRepository mappingRepository;
 
-    @GetMapping("/mappings")
-    public String listMappings(Model listMap) {
-        log.info("Querying mapping...");
-        List<MyMapping> mappings = mappingRepository.findAll();
+    @Autowired
+    private EventRepository eventRepository;
 
-        for (MyMapping mapping: mappings) {
+    @GetMapping("/event_func_maps_list")
+    public String listEventFuncMappings(Model listMap) {
+        log.info("Querying mappings...");
+        List<EventFunctionMapping> mappings = mappingRepository.findAll();
+
+        for (EventFunctionMapping mapping: mappings) {
             log.info(mapping.toString());
         }
 
         listMap.addAttribute("mappings", mappings);
-        return "mappings";
+        return "event_func_maps_list";
     }
 
-    @PostMapping("/create")
-    public String createMapping(@ModelAttribute Function function, @ModelAttribute Event event) throws IOException {
-        log.info("Creating lambda function and event mapping: " + function.getFuncName() + event.getEventName());
+    @PostMapping("/event_func_map")
+    public String createEventFunctionMapping( @ModelAttribute Event event, @ModelAttribute Function function) throws IOException {
+        log.info("Creating event and function mapping: " + function.getFuncName() + event.getEventName());
 
-        MyMapping mapping = new MyMapping();
-        mapping.setId(UUID.randomUUID().toString().replace("-", ""));
-        mapping.setEventId(event.getEventId());
+        EventFunctionMapping mapping = new EventFunctionMapping();
+//        mapping.setId(UUID.randomUUID().toString().replace("-", ""));
+        mapping.setEventId(event.getId());
         mapping.setEventName(event.getEventName());
-        mapping.setFuncId(function.getFuncId());
+        mapping.setFuncId(function.getId());
         mapping.setFuncName(function.getFuncName());
 
-        MyMapping res = myMappingRepository.save(mapping);
-        log.info("lambda function and event mapping created: " + res.toString());
-        return "redirect:/mappings";
+        Event eventRes = eventRepository.save(event);
+        EventFunctionMapping res = mappingRepository.save(mapping);
+        log.info("Event and function mapping created: " + res.toString());
+        return "redirect:/event_func_mappings";
     }
-
-
-
-//    @GetMapping("/maps")
-//    public String listMappings(Model map) {
-//        return "mappings";
-//    }
-//
-//    @PostMapping("/map")
-//    public String mapFuncWithEvent(Model map) {
-//        return "mappings";
-//    }
 }

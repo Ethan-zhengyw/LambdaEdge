@@ -6,33 +6,28 @@ import javax.persistence.Id;
 import javax.persistence.criteria.CriteriaBuilder;
 
 @Entity
-public class MyMapping {
-
+public class EventFunctionMapping {
     @Id
     @GeneratedValue
-    private String id;
+    private Integer id;
 
-    private String funcId;
+    private Integer funcId;
 
     private String funcName;
 
-    private String eventId;
+    private Integer eventId;
 
     private String eventName;
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setFuncId(String funcId) {
+    public void setFuncId(Integer funcId) {
         this.funcId = funcId;
     }
 
-    public String getFuncId() {
+    public Integer getFuncId() {
         return funcId;
     }
 
@@ -44,11 +39,11 @@ public class MyMapping {
         return funcName;
     }
 
-    public void setEventId(String eventId) {
+    public void setEventId(Integer eventId) {
         this.eventId = eventId;
     }
 
-    public String getEventId() {
+    public Integer getEventId() {
         return eventId;
     }
 
@@ -61,7 +56,7 @@ public class MyMapping {
     }
 
     public String toString() {
-        return String.format("{\"id\": %s, \"funcName\": %s, \"eventName\": %s}",
+        return String.format("{\"id\": %d, \"funcName\": %s, \"eventName\": %s}",
                 id, funcName, eventName);
     }
 }
