@@ -67,6 +67,8 @@ public class HomeController {
 
     @GetMapping("/create_event_func_map")
     public String createEventFunctionMapping(Model map) {
+        List<Function> functions = functionRepository.findAll();
+        map.addAttribute("functions", functions);
         map.addAttribute("mapping", new EventFunctionMapping());
         return "create_mapping";
     }
