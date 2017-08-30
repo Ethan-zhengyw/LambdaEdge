@@ -50,6 +50,6 @@ public class EventController {
 
     @PostMapping("/send_event")
     public String send_event(Model map) {
-        return "events";
+        return "list_event_results";
     }
 }

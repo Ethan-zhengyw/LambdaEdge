@@ -29,8 +29,8 @@ public class MappingController {
     @Autowired
     private EventRepository eventRepository;
 
-    @GetMapping("/event_func_maps_list")
-    public String listEventFuncMappings(Model listMap) {
+    @GetMapping("/list_event_func_mappings")
+    public String listEventFuncMappings(Model Map) {
         log.info("Querying mappings...");
         List<EventFunctionMapping> mappings = mappingRepository.findAll();
 
@@ -38,12 +38,12 @@ public class MappingController {
             log.info(mapping.toString());
         }
 
-        listMap.addAttribute("mappings", mappings);
-        return "event_func_maps_list";
+        Map.addAttribute("list_event_func_mappings", mappings);
+        return "list_event_func_mappings";
     }
 
-    @PostMapping("/event_func_map")
-    public String createEventFunctionMapping( @ModelAttribute Event event, @ModelAttribute Function function) throws IOException {
+    @PostMapping("/create_event_func_map")
+    public String createEventFunctionMapping(@ModelAttribute Event event, @ModelAttribute Function function) throws IOException {
         log.info("Creating event and function mapping: " + function.getFuncName() + event.getEventName());
 
         EventFunctionMapping mapping = new EventFunctionMapping();
