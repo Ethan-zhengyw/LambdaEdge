@@ -69,7 +69,7 @@ public class HomeController {
     public String sendEvent(Model map) {
         List<Event> events = eventRepository.findAll();
         map.addAttribute("events", events);
-        map.addAttribute("event", new Event());
+        map.addAttribute("event", new Event())
         return "pages/send_event";
     }
 
