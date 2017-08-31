@@ -5,6 +5,7 @@ import edgecloud.lambda.entity.EventFunctionMapping;
 import edgecloud.lambda.entity.Function;
 import edgecloud.lambda.entity.FunctionNodeMap;
 import edgecloud.lambda.entity.Node;
+import edgecloud.lambda.repository.EventRepository;
 import edgecloud.lambda.repository.FunctionRepository;
 import edgecloud.lambda.repository.NodeRepository;
 import edgecloud.lambda.utils.StubServer;
@@ -27,6 +28,10 @@ public class HomeController {
 
     @Autowired
     private FunctionRepository functionRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
     // home page
     @GetMapping("/")
     public String index(Model map) {
@@ -62,7 +67,10 @@ public class HomeController {
 
     @GetMapping("/send_event")
     public String sendEvent(Model map) {
-        return "list_event_results";
+        List<Event> events = eventRepository.findAll();
+        map.addAttribute("events", events);
+        map.addAttribute("event", new Event());
+        return "send_event";
     }
 
     @GetMapping("/create_event_func_map")

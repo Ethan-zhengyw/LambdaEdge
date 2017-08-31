@@ -1,4 +1,3 @@
-
 package edgecloud.lambda.controller;
 
 import edgecloud.deviceserver.ServerAPI;
@@ -20,8 +19,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
-
 
 import java.io.IOException;
 
@@ -45,7 +42,7 @@ public class EventController {
     @Autowired
     private FunctionNodeMapRepository fnMapRepository;
 
-    @GetMapping("/events")
+    @GetMapping("/list_event_results")
     public String listEvents(Model map) {
         log.info("Querying events...");
         List<Event> events = eventRepository.findAll();
@@ -55,18 +52,18 @@ public class EventController {
         }
 
         map.addAttribute("events", events);
-        return "events";
+        return "list_event_results";
     }
 
-    @PostMapping("/create_event")
-    public String createEvent(@ModelAttribute Event event) throws IOException {
-        log.info("Creating event: " + event.getEventName());
-
-        Event res = eventRepository.save(event);
-        log.info("Event created: " + res.toString());
-
-        return "redirect:/events";
-    }
+//    @PostMapping("/create_event")
+//    public String createEvent(@ModelAttribute Event event) throws IOException {
+//        log.info("Creating event: " + event.getEventName());
+//
+//        Event res = eventRepository.save(event);
+//        log.info("Event created: " + res.toString());
+//
+//        return "redirect:/events";
+//    }
 
     @PostMapping("/send_event")
     public String sendEvent(@ModelAttribute Event event) {
@@ -85,16 +82,18 @@ public class EventController {
             for(FunctionNodeMap fnmap : fnmaps) {
                 String nodeId = fnmap.getNodeId().toString();
                 //TODO
-                String content = "";
-
+                String content = String.format("{\"funcName\": %s, \"funcVersion\": %s, \"funcHandler\": %s}",
+                        currentFuncName, currentFuncVerion, currentFunction.getFuncHandler());
                 try {
                     eventResult = serverAPI.sendMessage(2, nodeId, content);
+                    event.setEventResult(eventResult);
                 } catch (Exception e) {
                     log.info("Send event failed." + efmap.toString());
                 }
             }
         }
 
-        return "redirect:/list_event_results";
+//        return "redirect:/list_event_results";
+        return "redirect:/send_event";
     }
 }

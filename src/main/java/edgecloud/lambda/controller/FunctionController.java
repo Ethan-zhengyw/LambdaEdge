@@ -82,8 +82,10 @@ public class FunctionController {
         log.info("Function Id: " + fnm.getFuncId());
         log.info("Node Id: " + fnm.getNodeId());
 
+        Function function = functionRepository.findOne(fnm.getFuncId());
+
         try {
-            StubServer.pushFunctionToNode();
+            StubServer.pushFunctionToNode(fnm.getNodeId(), function);
         } catch (Exception e) {
             log.info("Push lambda function failed.");
             return "redirect:/functions";
