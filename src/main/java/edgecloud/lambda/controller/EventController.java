@@ -45,7 +45,7 @@ public class EventController {
     @Autowired
     private FunctionNodeMapRepository fnMapRepository;
 
-    @GetMapping("/events")
+    @GetMapping("/list_event_results")
     public String listEvents(Model map) {
         log.info("Querying events...");
         List<Event> events = eventRepository.findAll();
@@ -55,7 +55,7 @@ public class EventController {
         }
 
         map.addAttribute("events", events);
-        return "events";
+        return "pages/list_event_results";
     }
 
     @PostMapping("/create_event")

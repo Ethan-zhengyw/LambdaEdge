@@ -44,7 +44,7 @@ public class MappingController {
         }
 
         Map.addAttribute("list_event_func_mappings", mappings);
-        return "list_event_func_mappings";
+        return "pages/list_event_func_mappings";
     }
 
     @PostMapping("/create_event_func_map")

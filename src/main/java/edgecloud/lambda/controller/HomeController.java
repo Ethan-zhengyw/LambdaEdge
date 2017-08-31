@@ -30,7 +30,7 @@ public class HomeController {
     // home page
     @GetMapping("/")
     public String index(Model map) {
-        return "index";
+        return "pages/index";
     }
 
 
@@ -38,7 +38,7 @@ public class HomeController {
     @GetMapping("/create")
     public String creatFunction(Model map) {
         map.addAttribute("function", new Function());
-        return "create_function";
+        return "pages/create_function";
     }
 
     @GetMapping("/push")
@@ -52,7 +52,7 @@ public class HomeController {
         map.addAttribute("nodes", nodes);
         map.addAttribute("fnm", fnm);
 
-        return "push_function";
+        return "pages/push_function";
     }
 
     @GetMapping("/map")
@@ -62,7 +62,10 @@ public class HomeController {
 
     @GetMapping("/send_event")
     public String sendEvent(Model map) {
-        return "list_event_results";
+        Event event = new Event();
+        map.addAttribute("event", event);
+
+        return "pages/send_event";
     }
 
     @GetMapping("/create_event_func_map")
@@ -70,7 +73,7 @@ public class HomeController {
         List<Function> functions = functionRepository.findAll();
         map.addAttribute("functions", functions);
         map.addAttribute("mapping", new EventFunctionMapping());
-        return "create_mapping";
+        return "pages/create_mapping";
     }
 
 }

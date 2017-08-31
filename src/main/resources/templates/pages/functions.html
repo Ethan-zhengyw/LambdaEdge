@@ -1,0 +1,27 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout"
+      th:with="title='函数列表'">
+<th:block layout:fragment="content">
+
+    <div class="container" column="col-sm-4" align="center">
+
+        <table class="table table-striped">
+
+            <thead><th>id</th><th>name</th><th>version</th><th>body</th></thead>
+
+            <tbody>
+            <tr th:each="function : ${functions}">
+                <td th:text="${function.id}">0</td>
+                <td th:text="${function.funcName}">test</td>
+                <td th:text="${function.funcVersion}">0</td>
+                <td th:text="${function.funcBody}">echo "hello world"</td>
+            </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</th:block>
+</html>
