@@ -38,8 +38,8 @@ public class Function {
 
     @Override
     public String toString() {
-        return String.format("{\"id\": %d, \"func_name\": %s, \"funcVersion\": %d, \"funcBody\": %s,  \"func_path\": %s," +
-                        "\"funcHandler\": %s, \"funcDesc\": %s, \"funcRuntime\": %s, \"funcMemorySize\": %d}",
+        return String.format("{\"id\": \"%d\", \"funcName\": \"%s\", \"funcVersion\": \"%d\", \"funcBody\": \"%s\",  \"funcPath\": \"%s\"," +
+                        "\"funcHandler\": \"%s\", \"funcDesc\": \"%s\", \"funcRuntime\": \"%s\", \"funcMemorySize\": \"%d\"}",
                 id, funcName, funcVersion, funcBody, funcPath,
                 funcHandler, funcDesc, funcRuntime, funcMemorySize);
     }
