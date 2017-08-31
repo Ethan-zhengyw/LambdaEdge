@@ -8,13 +8,12 @@
 <h1>事件结果列表</h1>
 
 <div class="container" column="col-sm-4" align="center">
-Result
     <table class="table table-striped">
 
         <thead><th>Id</th><th>EventName</th><th>EventResult</th></thead>
 
         <tbody>
-        <tr th:each="event : ${list_event_results}">
+        <tr th:each="event : ${events}">
             <td th:text="${event.id}">0</td>
             <td th:text="${event.eventName}">test</td>
             <td th:text="${event.eventResult}">test</td>
