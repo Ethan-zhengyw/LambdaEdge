@@ -72,7 +72,7 @@ public class EventController {
         log.info("Sending event: " + event.toString());
 
         List<EventFunctionMapping> efmaps = efMappingRepository.findByEventName(event.getEventName());
-
+        Event currentEvent = eventRepository.findByEventName(event.getEventName());
         String eventResult = "";
         for(EventFunctionMapping efmap : efmaps) {
             Integer funcId = efmap.getFuncId();
@@ -87,13 +87,14 @@ public class EventController {
                         currentFuncName, currentFuncVerion, currentFunction.getFuncHandler());
                 try {
                     eventResult = serverAPI.sendMessage(2, nodeId, content);
-                    event.setEventResult(eventResult);
+                    currentEvent.setEventResult(eventResult);
+                    Event res = eventRepository.save(currentEvent);
+                    log.info("Event and eventResult saved: " + res.toString());
                 } catch (Exception e) {
                     log.info("Send event failed." + efmap.toString());
                 }
             }
         }
-
         return "redirect:/list_event_results";
     }
 }
