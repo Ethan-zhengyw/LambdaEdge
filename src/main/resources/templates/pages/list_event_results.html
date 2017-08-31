@@ -1,0 +1,25 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout"
+      th:with="title='事件结果列表'">
+<th:block layout:fragment="content">
+
+    <div class="container" column="col-sm-4" align="center">
+        <table class="table table-striped">
+
+            <thead><th>Id</th><th>EventName</th><th>EventResult</th></thead>
+
+            <tbody>
+            <tr th:each="event : ${events}">
+                <td th:text="${event.id}">0</td>
+                <td th:text="${event.eventName}">test</td>
+                <td th:text="${event.result}">test</td>
+            </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</th:block>
+</html>

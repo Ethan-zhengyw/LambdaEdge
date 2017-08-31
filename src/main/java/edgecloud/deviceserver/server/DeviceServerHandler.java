@@ -15,7 +15,7 @@ public class DeviceServerHandler extends SimpleChannelInboundHandler<Message.Cli
     protected void channelRead0(ChannelHandlerContext ctx, Message.ClientMessage msg) throws Exception{
         logger.info("receive client message: " + msg);
         Channel channel = ctx.channel();
-        channel.writeAndFlush(msg);
+
         new ClientMessageRouter(channel, msg).router();
 
     }

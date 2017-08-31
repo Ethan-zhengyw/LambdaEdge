@@ -18,7 +18,7 @@ public class FunctionIO {
         if (!file.getParentFile().exists()) {
             log.info("Directory doesn't exist, creating...: ", file.getParent());
             if (!file.getParentFile().mkdir()) {
-                log.info("Create directory failed.");
+                log.error("Create directory failed.");
                 return false;
             }
             log.info("Finished.");
@@ -27,7 +27,7 @@ public class FunctionIO {
         if (!file.exists()) {
             log.info("File not exist, creating...: ", file.getPath());
             if (!file.createNewFile()) {
-                log.info("Create new file failed.");
+                log.error("Create new file failed.");
                 return false;
             }
             log.info("Finished.");

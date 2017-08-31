@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class StubServer {
@@ -54,9 +55,18 @@ public class StubServer {
 
         String deviceId = String.valueOf(nodeId);
         int type = 0;
-        String content = function.toString();
 
+        // Base64 encode funcBody
+        String funcBody = function.getFuncBody();
+        String base64FuncBody = Base64.getEncoder().encodeToString(funcBody.getBytes());
+        log.info("FuncBody string in base64 is: " + base64FuncBody);
+
+        function.setFuncBody(base64FuncBody);
+        String content = function.toString();
         serverAPI.sendMessage(type, deviceId, content);
 
+        // After push function to node
+        // Decode funcBody in order not to change the funcBody in database
+        function.setFuncBody(funcBody);
     }
 }

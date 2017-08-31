@@ -86,7 +86,7 @@ public class DeviceContext {
         if (channel != null) {
             if (isOnline(deviceId)) {
                 logger.info("send message: " + msg);
-                channel.writeAndFlush(msg).addListener(ChannelFutureListener.CLOSE);
+                channel.writeAndFlush(msg);
             } else {
                 // TODO: need save the message and send it later
                 logger.error("device is offline: " + deviceId);
