@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -43,7 +44,7 @@ public class FunctionController {
         }
 
         map.addAttribute("functions", functions);
-        return "functions";
+        return "pages/functions";
     }
 
     @PostMapping("/create")
@@ -87,12 +88,12 @@ public class FunctionController {
         try {
             StubServer.pushFunctionToNode(fnm.getNodeId(), function);
         } catch (Exception e) {
-            log.info("Push lambda function failed.");
+            log.error("Push lambda function failed.");
             return "redirect:/functions";
         }
         fnmRepository.save(fnm);
 
-        return "redirect:/functions";
+        return "redirect:/";
     }
 
 }

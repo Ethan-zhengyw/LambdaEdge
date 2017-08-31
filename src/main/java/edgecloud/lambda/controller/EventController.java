@@ -1,3 +1,4 @@
+
 package edgecloud.lambda.controller;
 
 import edgecloud.deviceserver.ServerAPI;
@@ -52,7 +53,7 @@ public class EventController {
         }
 
         map.addAttribute("events", events);
-        return "list_event_results";
+        return "pages/list_event_results";
     }
 
 //    @PostMapping("/create_event")
@@ -93,7 +94,6 @@ public class EventController {
             }
         }
 
-//        return "redirect:/list_event_results";
         return "redirect:/send_event";
     }
 }
