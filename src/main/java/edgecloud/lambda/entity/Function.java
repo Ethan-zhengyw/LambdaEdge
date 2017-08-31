@@ -1,21 +1,19 @@
 package edgecloud.lambda.entity;
 
-import edgecloud.lambda.utils.FunctionIO;
-import edgecloud.lambda.utils.GetConfig;
-
 import javax.persistence.*;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 @Entity
 public class Function {
     @Id
     @GeneratedValue
     private Integer id;
-
     private String funcName;
-
     private Integer funcVersion;
+    private String funcHandler;  // filename.handler-method
+    private String funcDesc;
+    private String funcRuntime;  // e.g. python2.7
+    private Integer funcMemorySize;  // KB
+    private Integer funcTimeout;  // Seconds
 
     @Column(columnDefinition="TEXT")
     private String funcBody;
@@ -38,9 +36,12 @@ public class Function {
         return this.funcPath;
     }
 
+    @Override
     public String toString() {
-        return String.format("{\"id\": %d, \"func_name\": %s, \"funcVersion\": %d, \"funcBody\": %s,  \"func_path\": %s}",
-                id, funcName, funcVersion, funcBody, funcPath);
+        return String.format("{\"id\": %d, \"func_name\": %s, \"funcVersion\": %d, \"funcBody\": %s,  \"func_path\": %s," +
+                        "\"funcHandler\": %s, \"funcDesc\": %s, \"funcRuntime\": %s, \"funcMemorySize\": %d}",
+                id, funcName, funcVersion, funcBody, funcPath,
+                funcHandler, funcDesc, funcRuntime, funcMemorySize);
     }
 
     public Integer getFuncVersion() {
@@ -65,5 +66,45 @@ public class Function {
 
     public Integer getId() {
         return id;
+    }
+
+    public String getFuncHandler() {
+        return funcHandler;
+    }
+
+    public void setFuncHandler(String funcHandler) {
+        this.funcHandler = funcHandler;
+    }
+
+    public String getFuncDesc() {
+        return funcDesc;
+    }
+
+    public void setFuncDesc(String funcDesc) {
+        this.funcDesc = funcDesc;
+    }
+
+    public String getFuncRuntime() {
+        return funcRuntime;
+    }
+
+    public void setFuncRuntime(String funcRuntime) {
+        this.funcRuntime = funcRuntime;
+    }
+
+    public Integer getFuncMemorySize() {
+        return funcMemorySize;
+    }
+
+    public void setFuncMemorySize(Integer funcMemorySize) {
+        this.funcMemorySize = funcMemorySize;
+    }
+
+    public Integer getFuncTimeout() {
+        return funcTimeout;
+    }
+
+    public void setFuncTimeout(Integer funcTimeout) {
+        this.funcTimeout = funcTimeout;
     }
 }
