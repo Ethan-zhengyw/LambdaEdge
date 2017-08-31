@@ -83,7 +83,7 @@ public class EventController {
             for(FunctionNodeMap fnmap : fnmaps) {
                 String nodeId = fnmap.getNodeId().toString();
                 //TODO
-                String content = String.format("{\"funcName\": %s, \"funcVersion\": %s, \"funcHandler\": %s}",
+                String content = String.format("{\"funcName\": \"%s\", \"funcVersion\": \"%s\", \"funcHandler\": \"%s\"}",
                         currentFuncName, currentFuncVerion, currentFunction.getFuncHandler());
                 try {
                     eventResult = serverAPI.sendMessage(2, nodeId, content);
@@ -94,6 +94,6 @@ public class EventController {
             }
         }
 
-        return "redirect:/send_event";
+        return "redirect:/list_event_results";
     }
 }
