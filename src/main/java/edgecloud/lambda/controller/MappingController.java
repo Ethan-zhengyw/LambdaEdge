@@ -5,6 +5,8 @@ import edgecloud.lambda.entity.Function;
 import edgecloud.lambda.entity.EventFunctionMapping;
 import edgecloud.lambda.repository.EventRepository;
 import edgecloud.lambda.repository.EventFunctionMappingRepository;
+import edgecloud.lambda.repository.FunctionRepository;
+import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ import java.util.List;
 public class MappingController {
 
     private static final Logger log = LoggerFactory.getLogger(MappingController.class);
+
+    @Autowired
+    private FunctionRepository functionRepository;
 
     @Autowired
     private EventFunctionMappingRepository mappingRepository;
@@ -43,19 +48,30 @@ public class MappingController {
     }
 
     @PostMapping("/create_event_func_map")
-    public String createEventFunctionMapping(@ModelAttribute Event event, @ModelAttribute Function function) throws IOException {
-        log.info("Creating event and function mapping: " + function.getFuncName() + event.getEventName());
+    public String createEventFunctionMapping(@ModelAttribute EventFunctionMapping efmap) throws IOException {
+        Event currentEvent = eventRepository.findByEventName(efmap.getEventName());
+        if (currentEvent==null) {
+            log.info("Creating event and function mapping: " + efmap.getEventName() + efmap.getFuncId());
 
-        EventFunctionMapping mapping = new EventFunctionMapping();
+            //Save event.
+            Event event = new Event();
+            event.setEventName(efmap.getEventName());
+            Event eventRes = eventRepository.save(event);
+
+            //Create event and function mapping.
+            Function function = functionRepository.findOne(efmap.getFuncId());
+            EventFunctionMapping mapping = new EventFunctionMapping();
 //        mapping.setId(UUID.randomUUID().toString().replace("-", ""));
-        mapping.setEventId(event.getId());
-        mapping.setEventName(event.getEventName());
-        mapping.setFuncId(function.getId());
-        mapping.setFuncName(function.getFuncName());
-
-        Event eventRes = eventRepository.save(event);
-        EventFunctionMapping res = mappingRepository.save(mapping);
-        log.info("Event and function mapping created: " + res.toString());
-        return "redirect:/event_func_mappings";
+            mapping.setEventId(eventRes.getId());
+            mapping.setEventName(eventRes.getEventName());
+            mapping.setFuncId(function.getId());
+            mapping.setFuncName(function.getFuncName());
+            EventFunctionMapping res = mappingRepository.save(mapping);
+            log.info("Event and function mapping created: " + res.toString());
+        }
+        else{
+            log.info("Event and function mapping already existed: " + currentEvent.toString());
+        }
+        return "redirect:/list_event_func_mappings";
     }
 }
