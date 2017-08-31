@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-
-
 import java.io.IOException;
 
 import java.util.List;
@@ -58,15 +56,15 @@ public class EventController {
         return "pages/list_event_results";
     }
 
-    @PostMapping("/create_event")
-    public String createEvent(@ModelAttribute Event event) throws IOException {
-        log.info("Creating event: " + event.getEventName());
-
-        Event res = eventRepository.save(event);
-        log.info("Event created: " + res.toString());
-
-        return "redirect:/events";
-    }
+//    @PostMapping("/create_event")
+//    public String createEvent(@ModelAttribute Event event) throws IOException {
+//        log.info("Creating event: " + event.getEventName());
+//
+//        Event res = eventRepository.save(event);
+//        log.info("Event created: " + res.toString());
+//
+//        return "redirect:/events";
+//    }
 
     @PostMapping("/send_event")
     public String sendEvent(@ModelAttribute Event event) {
@@ -74,7 +72,7 @@ public class EventController {
         log.info("Sending event: " + event.toString());
 
         List<EventFunctionMapping> efmaps = efMappingRepository.findByEventName(event.getEventName());
-
+        Event currentEvent = eventRepository.findByEventName(event.getEventName());
         String eventResult = "";
         for(EventFunctionMapping efmap : efmaps) {
             Integer funcId = efmap.getFuncId();
@@ -85,16 +83,18 @@ public class EventController {
             for(FunctionNodeMap fnmap : fnmaps) {
                 String nodeId = fnmap.getNodeId().toString();
                 //TODO
-                String content = "";
-
+                String content = String.format("{\"funcName\": \"%s\", \"funcVersion\": \"%s\", \"funcHandler\": \"%s\"}",
+                        currentFuncName, currentFuncVerion, currentFunction.getFuncHandler());
                 try {
                     eventResult = serverAPI.sendMessage(2, nodeId, content);
+                    currentEvent.setEventResult(eventResult);
+                    Event res = eventRepository.save(currentEvent);
+                    log.info("Event and eventResult saved: " + res.toString());
                 } catch (Exception e) {
                     log.info("Send event failed." + efmap.toString());
                 }
             }
         }
-
         return "redirect:/list_event_results";
     }
 }

@@ -13,7 +13,7 @@ public class Event {
 
     private String eventName;
 
-    private String result;
+    private String eventResult;
 
     public Integer getId() {
         return id;
@@ -31,17 +31,16 @@ public class Event {
         this.eventName = eventName;
     }
 
-    public String getResult() {
-        return result;
+    public String getEventResult() {
+        return eventResult;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setEventResult(String result) {
+        this.eventResult = result;
     }
-	
-	
+
 	public String toString() {
-        return String.format("{\"id\": %d, \"eventName\": %s}",
-                id, eventName);
+        return String.format("{\"id\": %d, \"eventName\": %s, \"eventResult\": %s}",
+                id, eventName, eventResult);
     }
 }
