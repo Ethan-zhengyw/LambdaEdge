@@ -19,13 +19,12 @@
                 <div class="col-sm-3">
                     <select class="form-control" id="funcId" name="funcId" th:field="*{funcId}">
                         <option th:each="function : ${functions}"
-                                th:text="${function.funcName}"
+                                th:text="${#strings.concat(function.funcName, ':', function.funcVersion)}"
                                 th:value="${function.id}">Function
                         </option>
                     </select>
                 </div>
             </div>
-
 
             <div class="form-group">
                 <div class="col-sm-offset-4 col-sm-1">
