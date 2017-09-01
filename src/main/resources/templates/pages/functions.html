@@ -8,14 +8,18 @@
 
         <table class="table table-striped">
 
-            <thead><th>id</th><th>name</th><th>version</th><th>body</th></thead>
+            <thead><th>Id</th><th>Name</th><th>Version</th><th>Runtime</th><th>Memory Limit(KB)</th><th>Timeout(S)</th><th>Handler</th><th>Body</th></thead>
 
             <tbody>
             <tr th:each="function : ${functions}">
                 <td th:text="${function.id}">0</td>
                 <td th:text="${function.funcName}">test</td>
                 <td th:text="${function.funcVersion}">0</td>
-                <td th:text="${function.funcBody}">echo "hello world"</td>
+                <td th:text="${function.funcRuntime}">python2.7</td>
+                <td th:text="${function.funcMemorySize}">512</td>
+                <td th:text="${function.funcTimeout}">30</td>
+                <td th:text="${function.funcHandler}">main</td>
+                <td th:title="${function.funcBody}" th:text="${#strings.abbreviate(function.funcBody, 50)}">echo "hello world"</td>
             </tr>
             </tbody>
 

@@ -43,4 +43,9 @@ public class Node {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return String.format("{\"id\": \"%d\", \"desc\", \"%s\"}", id, desc);
+    }
 }

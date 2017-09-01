@@ -3,8 +3,10 @@ package edgecloud.lambda.controller;
 import com.sun.org.apache.xpath.internal.functions.FuncId;
 import edgecloud.lambda.entity.Function;
 import edgecloud.lambda.entity.FunctionNodeMap;
+import edgecloud.lambda.entity.Node;
 import edgecloud.lambda.repository.FunctionNodeMapRepository;
 import edgecloud.lambda.repository.FunctionRepository;
+import edgecloud.lambda.repository.NodeRepository;
 import edgecloud.lambda.utils.FunctionIO;
 import edgecloud.lambda.utils.GetConfig;
 import edgecloud.lambda.utils.StubServer;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -33,6 +36,9 @@ public class FunctionController {
 
     @Autowired
     private FunctionNodeMapRepository fnmRepository;
+
+    @Autowired
+    private NodeRepository nodeRepository;
 
     @GetMapping("/functions")
     public String listFunctions(Model map) {
@@ -84,14 +90,46 @@ public class FunctionController {
         log.info("Node Id: " + fnm.getNodeId());
 
         Function function = functionRepository.findOne(fnm.getFuncId());
+        List<Node> nodes = new ArrayList<>();
+        List<Node> allNodes = StubServer.queryNodes();
 
-        try {
-            StubServer.pushFunctionToNode(fnm.getNodeId(), function);
-        } catch (Exception e) {
-            log.error("Push lambda function failed.");
-            return "redirect:/functions";
+        if (fnm.getNodeId().equals(-1)) {
+            log.info("Pushing lambda function to All Nodes...");
+            nodes = allNodes;
+        } else {
+            log.info("Pushing lambda function to one Node...");
+            for (Node node : allNodes) {
+                if (node.getId().equals(fnm.getNodeId())) {
+                    nodes.add(node);
+                    break;
+                }
+            }
         }
-        fnmRepository.save(fnm);
+
+        log.info("Destination nodes size is: " + nodes.size());
+        for (Node node : nodes) {
+            log.info("Pushing function to node: " + node.toString());
+
+            FunctionNodeMap _fnm = new FunctionNodeMap();
+            _fnm.setFuncId(fnm.getFuncId());
+            _fnm.setNodeId(node.getId());
+
+            try {
+                StubServer.pushFunctionToNode(_fnm.getNodeId(), function);
+            } catch (Exception e) {
+                log.error("Push lambda function failed, destination is: " + _fnm.getNodeId());
+                continue;
+            }
+
+            // check whether same fnm exists
+            if (fnmRepository.findByFuncIdAndNodeId(fnm.getFuncId(), fnm.getNodeId()) != null) {
+                log.info("Same fnm exists, no need to save function-node map again, skipping.");
+                continue;
+            }
+
+            fnmRepository.save(_fnm);
+            log.info("Push lambda function succeed, destination is: " + _fnm.getNodeId());
+        }
 
         return "redirect:/";
     }

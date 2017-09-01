@@ -40,7 +40,7 @@ public class Function {
     public String toString() {
         return String.format("{\"id\": \"%d\", \"funcName\": \"%s\", \"funcVersion\": \"%d\", \"funcBody\": \"%s\",  \"funcPath\": \"%s\"," +
                         "\"funcHandler\": \"%s\", \"funcDesc\": \"%s\", \"funcRuntime\": \"%s\", \"funcMemorySize\": \"%d\"}",
-                id, funcName, funcVersion, funcBody, funcPath,
+                id, funcName, funcVersion, funcBody, "",
                 funcHandler, funcDesc, funcRuntime, funcMemorySize);
     }
 

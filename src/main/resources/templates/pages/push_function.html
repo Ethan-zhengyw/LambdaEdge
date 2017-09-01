@@ -8,11 +8,11 @@
         <form class="form-horizontal" action="#" th:action="@{/push}" th:object="${fnm}" method="post">
 
             <div class="form-group">
-                <label for="funcId" class="col-sm-2 control-label" path="funcId">选择函数Id</label>
+                <label for="funcId" class="col-sm-2 control-label" path="funcId">请选择函数</label>
                 <div class="col-sm-3">
                     <select class="form-control" id="funcId" name="funcId" th:field="*{funcId}">
                         <option th:each="function : ${functions}"
-                                th:text="${function.id}"
+                                th:text="${#strings.concat(function.funcName, ':', function.funcVersion)}"
                                 th:value="${function.id}">Function Id
                         </option>
                     </select>
@@ -24,9 +24,10 @@
                 <div class="col-sm-3">
                     <select class="form-control" id="nodeId" name="nodeId" th:field="*{nodeId}">
                         <option th:each="node : ${nodes}"
-                                th:text="${node.id}"
+                                th:text="${#strings.concat(node.id, '(', node.desc, ')')}"
                                 th:value="${node.id}">Node Id
                         </option>
+                        <option th:value="-1">All Nodes</option>
                     </select>
                 </div>
             </div>

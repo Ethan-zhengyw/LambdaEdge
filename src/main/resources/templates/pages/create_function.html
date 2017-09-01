@@ -60,8 +60,10 @@
 
             <div class="form-group">
                 <label for="funcBody" class="col-sm-2 control-label" path="funcBody">函数体</label>
-                <div class="col-sm-3">
-                    <textarea class="form-control" id="funcBody" placeholder="请输入函数体" name="funcBody" th:field="*{funcBody}"></textarea>
+                <div class="col-sm-6">
+                    <textarea class="form-control"
+                              rows="10" cols="80"
+                              id="funcBody" placeholder="请输入函数体" name="funcBody" th:field="*{funcBody}"></textarea>
                 </div>
             </div>
 

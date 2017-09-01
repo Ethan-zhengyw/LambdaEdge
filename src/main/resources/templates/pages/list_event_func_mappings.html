@@ -9,13 +9,13 @@
 
         <table class="table table-striped">
 
-            <thead><th>Id</th><th>FunctionName</th><th>EventName</th></thead>
+            <thead><th>Id</th><th>Event Name</th><th>Function Name</th></thead>
 
             <tbody>
             <tr th:each="mapping : ${list_event_func_mappings}">
                 <td th:text="${mapping.id}">0</td>
+                <td th:text="${mapping.eventName}">test</td>
                 <td th:text="${mapping.funcName}">test</td>
-                <td th:text="${mapping.EventName}">test</td>
             </tr>
             </tbody>
 
