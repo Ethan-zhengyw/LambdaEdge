@@ -48,7 +48,7 @@ public class ServerAPI {
                     result = message.getContent();
                     return result;
                 }
-
+                tryCount--;
                 Thread.sleep(500);
             }
             return result;

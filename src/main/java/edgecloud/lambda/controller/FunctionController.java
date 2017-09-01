@@ -120,8 +120,15 @@ public class FunctionController {
                 log.error("Push lambda function failed, destination is: " + _fnm.getNodeId());
                 continue;
             }
+
+            // check whether same fnm exists
+            if (fnmRepository.findByFuncIdAndNodeId(fnm.getFuncId(), fnm.getNodeId()) != null) {
+                log.info("Same fnm exists, no need to save function-node map again, skipping.");
+                continue;
+            }
+
             fnmRepository.save(_fnm);
-            log.error("Push lambda function succeed, destination is: " + _fnm.getNodeId());
+            log.info("Push lambda function succeed, destination is: " + _fnm.getNodeId());
         }
 
         return "redirect:/";
