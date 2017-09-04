@@ -22,8 +22,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.IOException;
+import com.alibaba.fastjson.*;
 
-import java.util.List;
+import java.util.*;
+
 
 @Controller
 public class EventController {
@@ -56,45 +58,49 @@ public class EventController {
         return "pages/list_event_results";
     }
 
-//    @PostMapping("/create_event")
-//    public String createEvent(@ModelAttribute Event event) throws IOException {
-//        log.info("Creating event: " + event.getEventName());
-//
-//        Event res = eventRepository.save(event);
-//        log.info("Event created: " + res.toString());
-//
-//        return "redirect:/events";
-//    }
-
     @PostMapping("/send_event")
     public String sendEvent(@ModelAttribute Event event) {
-
         log.info("Sending event: " + event.toString());
 
         List<EventFunctionMapping> efmaps = efMappingRepository.findByEventName(event.getEventName());
         Event currentEvent = eventRepository.findByEventName(event.getEventName());
         String eventResult = "";
+        JSONObject jsonContent = new JSONObject();
+        JSONArray funcInfoArray = new JSONArray();
+        JSONObject funcInfo = new JSONObject();
+        jsonContent.put("Event", JSON.parseObject(event.getEventArgs()));
+        List<FunctionNodeMap> fnmaps = new ArrayList<>();
+
+        //Get function List.
         for(EventFunctionMapping efmap : efmaps) {
             Integer funcId = efmap.getFuncId();
+            List<FunctionNodeMap> tempFnmaps = fnMapRepository.findByFuncId(funcId);
+            fnmaps.addAll(tempFnmaps);
+
             Function currentFunction = functionRepository.findById(funcId);
             String currentFuncName = efmap.getFuncName();
             Integer currentFuncVerion = currentFunction.getFuncVersion();
-            List<FunctionNodeMap> fnmaps = fnMapRepository.findByFuncId(funcId);
-            for(FunctionNodeMap fnmap : fnmaps) {
-                String nodeId = fnmap.getNodeId().toString();
-                //TODO
-                String content = String.format("{\"funcName\": \"%s\", \"funcVersion\": \"%s\", \"funcHandler\": \"%s\"}",
-                        currentFuncName, currentFuncVerion, currentFunction.getFuncHandler());
-                try {
-                    eventResult = serverAPI.sendMessage(2, nodeId, content);
-                    currentEvent.setEventResult(eventResult);
-                    Event res = eventRepository.save(currentEvent);
-                    log.info("Event and eventResult saved: " + res.toString());
-                } catch (Exception e) {
-                    log.info("Send event failed." + efmap.toString());
-                }
+            funcInfo.put("funcName", currentFuncName);
+            funcInfo.put("version", currentFuncVerion.toString());
+            funcInfoArray.add(funcInfo);
+        }
+        jsonContent.put("funcList", funcInfoArray);
+
+        //Get Node List and send messages.
+        for(FunctionNodeMap fnmap : fnmaps) {
+            String nodeId = fnmap.getNodeId().toString();
+            //TODO
+            String content = JSON.toJSONString(jsonContent);
+            try {
+                eventResult = serverAPI.sendMessage(2, nodeId, content);
+                currentEvent.setEventResult(eventResult);
+                Event res = eventRepository.save(currentEvent);
+                log.info("Event and eventResult saved: " + res.toString());
+            } catch (Exception e) {
+                log.info("Send event failed." + currentEvent.toString());
             }
         }
+
         return "redirect:/list_event_results";
     }
 }
