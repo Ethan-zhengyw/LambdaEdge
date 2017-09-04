@@ -69,7 +69,7 @@ public class EventController {
         JSONArray funcInfoArray = new JSONArray();
 
 //        jsonContent.put("Event", JSON.parseObject(event.getEventArgs()));
-        jsonContent.put("Event", JSON.toJSONString(event.getEventArgs()));
+        jsonContent.put("Event", JSON.toJSONString(JSON.parseObject(event.getEventArgs())));
         List<FunctionNodeMap> fnmaps = new ArrayList<>();
 
         //Get function List.
