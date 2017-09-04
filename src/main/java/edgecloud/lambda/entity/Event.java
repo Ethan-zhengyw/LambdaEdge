@@ -13,6 +13,8 @@ public class Event {
 
     private String eventName;
 
+    private String eventArgs;
+
     private String eventResult;
 
     public Integer getId() {
@@ -42,5 +44,13 @@ public class Event {
 	public String toString() {
         return String.format("{\"id\": %d, \"eventName\": %s, \"eventResult\": %s}",
                 id, eventName, eventResult);
+    }
+
+    public String getEventArgs() {
+        return eventArgs;
+    }
+
+    public void setEventArgs(String eventArgs) {
+        this.eventArgs = eventArgs;
     }
 }
