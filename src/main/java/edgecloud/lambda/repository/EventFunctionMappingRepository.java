@@ -8,5 +8,6 @@ import java.util.List;
 public interface EventFunctionMappingRepository extends JpaRepository<EventFunctionMapping, Integer> {
 
     public List<EventFunctionMapping> findByEventName(String eventName);
+    public EventFunctionMapping findByEventNameAndFuncId(String eventName, Integer funcId);
 
 }

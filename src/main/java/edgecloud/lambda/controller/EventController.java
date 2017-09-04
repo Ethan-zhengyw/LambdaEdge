@@ -67,8 +67,9 @@ public class EventController {
         String eventResult = "";
         JSONObject jsonContent = new JSONObject();
         JSONArray funcInfoArray = new JSONArray();
-        JSONObject funcInfo = new JSONObject();
-        jsonContent.put("Event", JSON.parseObject(event.getEventArgs()));
+
+//        jsonContent.put("Event", JSON.parseObject(event.getEventArgs()));
+        jsonContent.put("Event", JSON.toJSONString(event.getEventArgs()));
         List<FunctionNodeMap> fnmaps = new ArrayList<>();
 
         //Get function List.
@@ -80,17 +81,23 @@ public class EventController {
             Function currentFunction = functionRepository.findById(funcId);
             String currentFuncName = efmap.getFuncName();
             Integer currentFuncVerion = currentFunction.getFuncVersion();
+            JSONObject funcInfo = new JSONObject();
             funcInfo.put("funcName", currentFuncName);
             funcInfo.put("version", currentFuncVerion.toString());
-            funcInfoArray.add(funcInfo);
+            funcInfoArray.fluentAdd(funcInfo);
         }
         jsonContent.put("funcList", funcInfoArray);
 
         //Get Node List and send messages.
+        List<String> nodeIds = new ArrayList<>();
         for(FunctionNodeMap fnmap : fnmaps) {
-            String nodeId = fnmap.getNodeId().toString();
+            String tempNodeId = fnmap.getNodeId().toString();
+            nodeIds.add(tempNodeId);
+        }
+
+        String content = JSON.toJSONString(jsonContent);
+        for (String nodeId : nodeIds){
             //TODO
-            String content = JSON.toJSONString(jsonContent);
             try {
                 eventResult = serverAPI.sendMessage(2, nodeId, content);
                 currentEvent.setEventResult(eventResult);
