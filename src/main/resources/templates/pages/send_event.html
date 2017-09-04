@@ -20,6 +20,15 @@
             </div>
 
             <div class="form-group">
+                <label for="eventArgs" class="col-sm-2 control-label" path="eventArgs">事件参数</label>
+                <div class="col-sm-6">
+                    <textarea class="form-control"
+                              rows="10" cols="80"
+                              id="eventArgs" placeholder="请输入事件参数（Json格式）" name="eventArgs" th:field="*{eventArgs}"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <div class="col-sm-offset-4 col-sm-1">
                     <button type="submit" class="btn btn-default">发送</button>
                 </div>
