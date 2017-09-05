@@ -2,12 +2,10 @@
 package edgecloud.lambda.controller;
 
 import edgecloud.deviceserver.ServerAPI;
-import edgecloud.lambda.entity.Event;
-import edgecloud.lambda.entity.EventFunctionMapping;
-import edgecloud.lambda.entity.Function;
+import edgecloud.lambda.entity.*;
 
-import edgecloud.lambda.entity.FunctionNodeMap;
 import edgecloud.lambda.repository.EventRepository;
+import edgecloud.lambda.repository.EventResultRepository;
 import edgecloud.lambda.repository.EventFunctionMappingRepository;
 import edgecloud.lambda.repository.FunctionNodeMapRepository;
 import edgecloud.lambda.repository.FunctionRepository;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.io.IOException;
 import com.alibaba.fastjson.*;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -37,6 +36,9 @@ public class EventController {
     private EventRepository eventRepository;
 
     @Autowired
+    private EventResultRepository eventResultRepository;
+
+    @Autowired
     private EventFunctionMappingRepository efMappingRepository;
 
     @Autowired
@@ -46,15 +48,15 @@ public class EventController {
     private FunctionNodeMapRepository fnMapRepository;
 
     @GetMapping("/list_event_results")
-    public String listEvents(Model map) {
-        log.info("Querying events...");
-        List<Event> events = eventRepository.findAll();
+    public String listEventResults(Model map) {
+        log.info("Querying event results...");
+        List<EventResult> eventResults = eventResultRepository.findAll();
 
-        for (Event event : events) {
-            log.info(event.toString());
+        for (EventResult eventResult : eventResults) {
+            log.info(eventResult.toString());
         }
 
-        map.addAttribute("events", events);
+        map.addAttribute("eventResults", eventResults);
         return "pages/list_event_results";
     }
 
@@ -63,12 +65,14 @@ public class EventController {
         log.info("Sending event: " + event.toString());
 
         List<EventFunctionMapping> efmaps = efMappingRepository.findByEventName(event.getEventName());
-        Event currentEvent = eventRepository.findByEventName(event.getEventName());
-        String eventResult = "";
+//        Event currentEvent = eventRepository.findByEventName(event.getEventName());
+        EventResult currentEventResult = new EventResult();
+        String result = "";
         JSONObject jsonContent = new JSONObject();
         JSONArray funcInfoArray = new JSONArray();
-        JSONObject funcInfo = new JSONObject();
-        jsonContent.put("Event", JSON.parseObject(event.getEventArgs()));
+
+//        jsonContent.put("Event", JSON.parseObject(event.getEventArgs()));
+        jsonContent.put("Event", JSON.toJSONString(JSON.parseObject(event.getEventArgs())));
         List<FunctionNodeMap> fnmaps = new ArrayList<>();
 
         //Get function List.
@@ -80,24 +84,40 @@ public class EventController {
             Function currentFunction = functionRepository.findById(funcId);
             String currentFuncName = efmap.getFuncName();
             Integer currentFuncVerion = currentFunction.getFuncVersion();
+            JSONObject funcInfo = new JSONObject();
             funcInfo.put("funcName", currentFuncName);
             funcInfo.put("version", currentFuncVerion.toString());
-            funcInfoArray.add(funcInfo);
+            funcInfoArray.fluentAdd(funcInfo);
         }
         jsonContent.put("funcList", funcInfoArray);
 
         //Get Node List and send messages.
+        List<Integer> nodeIds = new ArrayList<>();
         for(FunctionNodeMap fnmap : fnmaps) {
-            String nodeId = fnmap.getNodeId().toString();
+            Integer tempNodeId = fnmap.getNodeId();
+            nodeIds.add(tempNodeId);
+        }
+
+        String content = JSON.toJSONString(jsonContent);
+        for (Integer nodeId : nodeIds){
             //TODO
-            String content = JSON.toJSONString(jsonContent);
             try {
-                eventResult = serverAPI.sendMessage(2, nodeId, content);
-                currentEvent.setEventResult(eventResult);
-                Event res = eventRepository.save(currentEvent);
-                log.info("Event and eventResult saved: " + res.toString());
+                result = serverAPI.sendMessage(2, nodeId.toString(), content);
+                currentEventResult.setEventId(event.getId());
+                currentEventResult.setEventName(event.getEventName());
+//                currentEventResult.setFuncId();
+                currentEventResult.setNodeId(nodeId);
+                currentEventResult.setEventResult(result);
+
+                //Set the finish time.
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String timeStamp = dateFormat.format(new Date());
+                currentEventResult.setFinishTime(timeStamp);
+
+                EventResult eventResult = eventResultRepository.save(currentEventResult);
+                log.info("Event and eventResult saved: " + eventResult.toString());
             } catch (Exception e) {
-                log.info("Send event failed." + currentEvent.toString());
+                log.info("Send event failed." + currentEventResult.toString());
             }
         }
 
