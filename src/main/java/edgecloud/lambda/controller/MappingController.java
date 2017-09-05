@@ -51,20 +51,25 @@ public class MappingController {
     @PostMapping("/create_event_func_map")
     public String createEventFunctionMapping(@ModelAttribute EventFunctionMapping efmap) throws IOException {
         Event currentEvent = eventRepository.findByEventName(efmap.getEventName());
-        if (currentEvent==null) {
+//        Function currentFunction = functionRepository.findById(efmap.getFuncId());
+        EventFunctionMapping currentEfmap =
+                mappingRepository.findByEventNameAndFuncId(efmap.getEventName(), efmap.getFuncId());
+        if (currentEfmap==null) {
             log.info("Creating event and function mapping: " + efmap.getEventName() + efmap.getFuncId());
 
             //Save event.
-            Event event = new Event();
-            event.setEventName(efmap.getEventName());
-            Event eventRes = eventRepository.save(event);
+            if (currentEvent==null){
+                Event event = new Event();
+                event.setEventName(efmap.getEventName());
+                currentEvent = eventRepository.save(event);
+            }
 
             //Create event and function mapping.
             Function function = functionRepository.findOne(efmap.getFuncId());
             EventFunctionMapping mapping = new EventFunctionMapping();
 //        mapping.setId(UUID.randomUUID().toString().replace("-", ""));
-            mapping.setEventId(eventRes.getId());
-            mapping.setEventName(eventRes.getEventName());
+            mapping.setEventId(currentEvent.getId());
+            mapping.setEventName(currentEvent.getEventName());
             mapping.setFuncId(function.getId());
             mapping.setFuncName(function.getFuncName());
             EventFunctionMapping res = mappingRepository.save(mapping);
