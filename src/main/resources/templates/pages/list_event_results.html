@@ -7,13 +7,16 @@
     <div class="container" column="col-sm-4" align="center">
         <table class="table table-striped">
 
-            <thead><th>Id</th><th>EventName</th><th>EventResult</th></thead>
+            <thead><th>Id</th><th>EventName</th><th>FunctionId</th><th>NodeId</th><th>EventResult</th><th>FinishTime</th></thead>
 
             <tbody>
-            <tr th:each="event : ${events}">
-                <td th:text="${event.id}">0</td>
-                <td th:text="${event.eventName}">test</td>
-                <td th:text="${event.eventResult}">test</td>
+            <tr th:each="eventResult : ${eventResults}">
+                <td th:text="${eventResult.id}">0</td>
+                <td th:text="${eventResult.eventName}">test</td>
+                <td th:text="${eventResult.funcId}">test</td>
+                <td th:text="${eventResult.nodeId}">test</td>
+                <td th:text="${eventResult.eventResult}">test</td>
+                <td th:text="${eventResult.finishTime}">test</td>
             </tr>
             </tbody>
 

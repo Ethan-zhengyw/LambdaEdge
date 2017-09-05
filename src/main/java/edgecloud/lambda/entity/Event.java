@@ -15,8 +15,6 @@ public class Event {
 
     private String eventArgs;
 
-    private String eventResult;
-
     public Integer getId() {
         return id;
     }
@@ -33,17 +31,8 @@ public class Event {
         this.eventName = eventName;
     }
 
-    public String getEventResult() {
-        return eventResult;
-    }
-
-    public void setEventResult(String result) {
-        this.eventResult = result;
-    }
-
 	public String toString() {
-        return String.format("{\"id\": %d, \"eventName\": %s, \"eventResult\": %s}",
-                id, eventName, eventResult);
+        return String.format("{\"id\": %d, \"eventName\": %s}",  id, eventName);
     }
 
     public String getEventArgs() {
