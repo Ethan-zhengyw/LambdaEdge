@@ -35,8 +35,8 @@ public class ClientMessageRouter {
                     case Constants.CLIENT_MESSAGE_RESULT:
                         DeviceContext.postResult(message);
                         break;
-                    case Constants.CLIENT_MESSAGE_OTHER:
-                        break;
+                    case Constants.CLIENT_MESSAGE_EVNENT_FUN_MAP:
+                        DeviceContext.online(message, channel);
                     default:
                         throw new IllegalArgumentException("this message type is invalid");
                 }

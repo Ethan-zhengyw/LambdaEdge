@@ -1,6 +1,8 @@
 
 package edgecloud.lambda.controller;
 
+import edgecloud.deviceserver.ServerAPI;
+import edgecloud.deviceserver.server.DeviceContext;
 import edgecloud.lambda.entity.Event;
 import edgecloud.lambda.entity.Function;
 import edgecloud.lambda.entity.EventFunctionMapping;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,6 +51,14 @@ public class MappingController {
         return "pages/list_event_func_mappings";
     }
 
+    @GetMapping("/list_event_func_mapping")
+    @ResponseBody
+    public List<?> listEventFuncMapping(Model Map) {
+        log.info("Querying mappings...");
+        List<EventFunctionMapping> mappings = mappingRepository.findAll();
+        return mappings;
+    }
+
     @PostMapping("/create_event_func_map")
     public String createEventFunctionMapping(@ModelAttribute EventFunctionMapping efmap) throws IOException {
         Event currentEvent = eventRepository.findByEventName(efmap.getEventName());
@@ -73,6 +84,8 @@ public class MappingController {
             mapping.setFuncId(function.getId());
             mapping.setFuncName(function.getFuncName());
             EventFunctionMapping res = mappingRepository.save(mapping);
+
+            DeviceContext.sendEventFunctionMap(mapping.toString());
             log.info("Event and function mapping created: " + res.toString());
         }
         else{
