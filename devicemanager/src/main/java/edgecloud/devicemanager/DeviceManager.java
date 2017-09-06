@@ -49,7 +49,8 @@ public class DeviceManager {
             JSONObject jo = new JSONObject(content);
             String funcName = jo.getString("funcName");
             String eventName = jo.getString("eventName");
-            eventFunctionMap.put(eventName, funcName);
+            int version = jo.getInt("version");
+            eventFunctionMap.put(eventName, funcName+":"+version);
         }else{
             System.out.println("server push wrong message to me.");
         }
@@ -87,7 +88,7 @@ public class DeviceManager {
                     }
                     tryCount--;
                 } else {
-                    result = content;
+                    result = tmp;
                     eventResultMap.remove(msgId);
                     break;
                 }
@@ -149,11 +150,10 @@ public class DeviceManager {
 
         HttpServer httpServer = new HttpServer(5000);
         new Thread(httpServer).start();
-        restapiHost = "localhost:8081";
+        restapiHost = "162.3.200.191:8081";
         getEventFunctionMap();
-        ClientServer clientServer = new ClientServer("localhost", 8082);
-
+        ClientServer clientServer = new ClientServer("162.3.200.191", 8082);
+        clientServer.run();
     }
-
 
 }

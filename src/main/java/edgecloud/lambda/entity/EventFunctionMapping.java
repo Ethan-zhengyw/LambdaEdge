@@ -56,7 +56,7 @@ public class EventFunctionMapping {
     }
 
     public String toString() {
-        return String.format("{\"id\": %d, \"funcName\": %s, \"eventName\": %s}",
+        return String.format("{\"id\": \"%d\", \"funcName\": \"%s\", \"eventName\": \"%s\"}",
                 id, funcName, eventName);
     }
 }

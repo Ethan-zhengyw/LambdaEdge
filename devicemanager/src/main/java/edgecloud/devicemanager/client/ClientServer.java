@@ -50,7 +50,7 @@ public class ClientServer {
             });
             future = bootstrap.connect(host, port).sync();
             // register device manager
-            sendMessage(5, "DeviceManager1", "NULL");
+            sendMessage(5, "1111", "NULL");
 
             future.channel().closeFuture().sync();
         } finally {

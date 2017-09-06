@@ -125,7 +125,7 @@ public class DeviceContext {
     }
 
     public static void sendEventFunctionMap(String content) {
-
+        logger.info("deviceManagerChannelMap: " + deviceManagerChannelMap);
         for (Channel channel : deviceManagerChannelMap.values()) {
             Message.ServiceMessage msg = Message.ServiceMessage.newBuilder()
                     .setContent(content)
@@ -133,7 +133,7 @@ public class DeviceContext {
                     .setDeviceId("NULL")
                     .setMessageId("NULL")
                     .build();
-            System.out.println();
+            System.out.println(msg);
             channel.writeAndFlush(msg);
         }
 

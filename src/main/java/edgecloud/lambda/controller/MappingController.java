@@ -1,6 +1,8 @@
 
 package edgecloud.lambda.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import edgecloud.deviceserver.ServerAPI;
 import edgecloud.deviceserver.server.DeviceContext;
 import edgecloud.lambda.entity.Event;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 //import java.util.UUID;
 
@@ -56,6 +59,11 @@ public class MappingController {
     public List<?> listEventFuncMapping(Model Map) {
         log.info("Querying mappings...");
         List<EventFunctionMapping> mappings = mappingRepository.findAll();
+        for (int i = 0; i < mappings.size(); i++) {
+            Function func = functionRepository.findOne(mappings.get(i).getFuncId());
+            int version = func.getFuncVersion();
+            mappings.get(i).setFuncName(mappings.get(i).getFuncName() + ":"+version);
+        }
         return mappings;
     }
 
@@ -84,8 +92,14 @@ public class MappingController {
             mapping.setFuncId(function.getId());
             mapping.setFuncName(function.getFuncName());
             EventFunctionMapping res = mappingRepository.save(mapping);
+            int funcVersion = function.getFuncVersion();
 
-            DeviceContext.sendEventFunctionMap(mapping.toString());
+            String param = mapping.toString();
+
+            JSONObject jo = JSON.parseObject(param);
+            jo.put("version", funcVersion);
+            DeviceContext.sendEventFunctionMap(jo.toString());
+            log.info("Event and function mapping created: " + mapping.toString());
             log.info("Event and function mapping created: " + res.toString());
         }
         else{

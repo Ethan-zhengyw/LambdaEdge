@@ -1,6 +1,7 @@
 package edgecloud.devicemanager.apiserver;
 
 
+import com.alibaba.fastjson.JSON;
 import edgecloud.devicemanager.DeviceManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -36,17 +37,23 @@ class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             JSONObject jo = new JSONObject(param);
 
             String eventName =  jo.get("eventName").toString();
-            String input = jo.get("Event").toString();
             logger.info("event name " + eventName);
             logger.info(DeviceManager.eventFunctionMap.toString());
-            String funName = DeviceManager.eventFunctionMap.get(eventName);
-            logger.info("funName  " + funName);
-            jo.append("funcList", funName);
+            String funNameVersion = DeviceManager.eventFunctionMap.get(eventName);
+            String funName = funNameVersion.split(":")[0];
+            String version = funNameVersion.split(":")[1];
+
+            JSONObject funcversionJson = new JSONObject();
+            funcversionJson.put("funcName", funName);
+            funcversionJson.put("version", version);
+
+            jo.append("funcList", funcversionJson);
+            jo.remove("eventName");
+            logger.info("funName  " + jo.toString());
             String result = DeviceManager.sendMessageToClient(2, jo.toString());
             jo.append("result", result);
 
             // 响应JSON
-//            String responseJson = String.format("{\"funcName\": \"%s\"}", funName);
             String responseJson = jo.toString();
             byte[] responseBytes = responseJson.getBytes("UTF-8");
             int contentLength = responseBytes.length;
