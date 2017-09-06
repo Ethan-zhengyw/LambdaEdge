@@ -65,59 +65,60 @@ public class EventController {
         log.info("Sending event: " + event.toString());
 
         List<EventFunctionMapping> efmaps = efMappingRepository.findByEventName(event.getEventName());
-//        Event currentEvent = eventRepository.findByEventName(event.getEventName());
-        EventResult currentEventResult = new EventResult();
-        String result = "";
-        JSONObject jsonContent = new JSONObject();
-        JSONArray funcInfoArray = new JSONArray();
-
-//        jsonContent.put("Event", JSON.parseObject(event.getEventArgs()));
-        jsonContent.put("Event", JSON.toJSONString(JSON.parseObject(event.getEventArgs())));
-        List<FunctionNodeMap> fnmaps = new ArrayList<>();
 
         //Get function List.
         for(EventFunctionMapping efmap : efmaps) {
-            Integer funcId = efmap.getFuncId();
-            List<FunctionNodeMap> tempFnmaps = fnMapRepository.findByFuncId(funcId);
-            fnmaps.addAll(tempFnmaps);
+            log.info("Event function mapping = " + efmap.toString());
 
+            //Construct message content.
+            JSONObject jsonContent = new JSONObject();
+            JSONArray funcInfoArray = new JSONArray();
+            List<FunctionNodeMap> fnmaps = new ArrayList<>();
+            JSONObject funcInfo = new JSONObject();
+
+            jsonContent.put("Event", JSON.toJSONString(JSON.parseObject(event.getEventArgs())));
+            Integer funcId = efmap.getFuncId();
             Function currentFunction = functionRepository.findById(funcId);
             String currentFuncName = efmap.getFuncName();
             Integer currentFuncVerion = currentFunction.getFuncVersion();
-            JSONObject funcInfo = new JSONObject();
             funcInfo.put("funcName", currentFuncName);
             funcInfo.put("version", currentFuncVerion.toString());
             funcInfoArray.fluentAdd(funcInfo);
-        }
-        jsonContent.put("funcList", funcInfoArray);
+            jsonContent.put("funcList", funcInfoArray);
+            String content = JSON.toJSONString(jsonContent);
 
-        //Get Node List and send messages.
-        List<Integer> nodeIds = new ArrayList<>();
-        for(FunctionNodeMap fnmap : fnmaps) {
-            Integer tempNodeId = fnmap.getNodeId();
-            nodeIds.add(tempNodeId);
-        }
+            //Get function node maps.
+            List<FunctionNodeMap> tempFnmaps = fnMapRepository.findByFuncId(funcId);
+            fnmaps.addAll(tempFnmaps);
 
-        String content = JSON.toJSONString(jsonContent);
-        for (Integer nodeId : nodeIds){
-            //TODO
-            try {
-                result = serverAPI.sendMessage(2, nodeId.toString(), content);
-                currentEventResult.setEventId(event.getId());
-                currentEventResult.setEventName(event.getEventName());
-//                currentEventResult.setFuncId();
-                currentEventResult.setNodeId(nodeId);
-                currentEventResult.setEventResult(result);
+            for(FunctionNodeMap fnmap : fnmaps) {
+                log.info("Function node mapping = " + fnmap.toString());
+                Integer nodeId = fnmap.getNodeId();
+                String result = "";
+                EventResult currentEventResult = new EventResult();
 
-                //Set the finish time.
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String timeStamp = dateFormat.format(new Date());
-                currentEventResult.setFinishTime(timeStamp);
+                try {
+                    //Send event and set event result.
+                    result = serverAPI.sendMessage(2, nodeId.toString(), content);
+                    log.info("Function result = " + result);
 
-                EventResult eventResult = eventResultRepository.save(currentEventResult);
-                log.info("Event and eventResult saved: " + eventResult.toString());
-            } catch (Exception e) {
-                log.info("Send event failed." + currentEventResult.toString());
+                    currentEventResult.setEventId(event.getId());
+                    currentEventResult.setEventName(event.getEventName());
+                    currentEventResult.setFuncId(funcId);
+                    currentEventResult.setNodeId(nodeId);
+                    currentEventResult.setEventResult(result);
+
+                    //Set the finish time.
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String timeStamp = dateFormat.format(new Date());
+                    currentEventResult.setFinishTime(timeStamp);
+
+                    //Save event result.
+                    EventResult eventResult = eventResultRepository.save(currentEventResult);
+                    log.info("Event and eventResult saved: " + eventResult.toString());
+                } catch (Exception e) {
+                    log.info("Send event failed." + efmap.toString());
+                }
             }
         }
 
