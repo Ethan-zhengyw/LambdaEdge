@@ -2,6 +2,8 @@ package edgecloud.deviceserver.server;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import edgecloud.lambda.entity.EventFunctionMapping;
+import edgecloud.lambda.repository.EventFunctionMappingRepository;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.group.ChannelGroup;
@@ -11,6 +13,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
@@ -18,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import org.apache.log4j.Logger;
-import org.springframework.boot.autoconfigure.web.DefaultErrorViewResolver;
+
 
 public class DeviceContext {
     private static final Logger logger = Logger.getLogger(DeviceContext.class);
@@ -27,6 +30,8 @@ public class DeviceContext {
     //device ; channel
     private static Map<String, Channel> deviceChannelMap = HashBiMap.create();
 
+    //device manger ; channel
+    private static Map<String, Channel> deviceManagerChannelMap = HashBiMap.create();
     // online device
     public static Map<String, Device> onlineDevice = new ConcurrentHashMap<>();
 
@@ -36,12 +41,18 @@ public class DeviceContext {
     // event and event result
     public static BiMap<String, Message.ClientMessage> eventResultMap = HashBiMap.create();
 
+
+
     public static void online(Message.ClientMessage message, Channel channel) {
         String deviceId = message.getDeviceId();
         logger.info("device is online: " + deviceId);
 
         channels.add(channel);
-        deviceChannelMap.put(deviceId, channel);
+        if(message.getType() == 5){
+            deviceManagerChannelMap.put(message.getDeviceId(), channel);
+        } else {
+            deviceChannelMap.put(deviceId, channel);
+        }
         Device device = new Device();
         device.setId(deviceId);
         device.setDeviceDesc(message.getContent());
@@ -111,6 +122,21 @@ public class DeviceContext {
         } else{
             logger.error(callbackId + " result is existc.");
         }
+    }
+
+    public static void sendEventFunctionMap(String content) {
+
+        for (Channel channel : deviceManagerChannelMap.values()) {
+            Message.ServiceMessage msg = Message.ServiceMessage.newBuilder()
+                    .setContent(content)
+                    .setType(3)
+                    .setDeviceId("NULL")
+                    .setMessageId("NULL")
+                    .build();
+            System.out.println();
+            channel.writeAndFlush(msg);
+        }
+
     }
 }
 
